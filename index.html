@@ -6,82 +6,146 @@
     <title>Bizli AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Comic Sans MS", "Comic Sans", cursive; background: #0a0a0a; color: #00f5ff; overflow: hidden; }
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; animation: fadeOut 0.5s ease 3s forwards; }
-        #splash img { width: 150px; filter: drop-shadow(0 0 20px #00f5ff); animation: pulse 1.5s ease-in-out infinite; }
-        #splash-text { margin-top: 30px; font-size: 18px; text-shadow: 0 0 10px #00f5ff; animation: typewriter 2s steps(30) 0.5s forwards; white-space: nowrap; overflow: hidden; width: 0; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes typewriter { to { width: 280px; } }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b141a; color: #e9edef; height: 100vh; overflow: hidden; }
+        
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b141a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; animation: fadeOut 0.5s ease 2.5s forwards; }
+        #splash img { width: 120px; height: 120px; border-radius: 50%; border: 2px solid #00a884; object-fit: cover; }
+        #splash-text { margin-top: 20px; font-size: 16px; color: #8696a0; }
         @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-        #app { display: none; height: 100vh; flex-direction: column; background: radial-gradient(circle at 50% 0%, #001a1f, #000); }
-        header { padding: 20px; text-align: center; border-bottom: 1px solid #00f5ff33; box-shadow: 0 0 20px #00f5ff22; }
-        header h1 { font-size: 28px; text-shadow: 0 0 15px #00f5ff; letter-spacing: 3px; }
-        #chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-      .msg { max-width: 80%; padding: 12px 18px; border-radius: 10px; line-height: 1.6; animation: slideIn 0.3s ease; }
-      .user { align-self: flex-end; background: #00f5ff22; border: 1px solid #00f5ff55; box-shadow: 0 0 10px #00f5ff33; }
-      .bizli { align-self: flex-start; background: #00000055; border: 1px solid #00f5ff33; box-shadow: 0 0 15px #00f5ff22; }
-      .source { font-size: 11px; margin-top: 8px; opacity: 0.7; color: #00c5dd; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        #input-area { padding: 20px; border-top: 1px solid #00f5ff33; display: flex; gap: 10px; }
-        #user-input { flex: 1; padding: 15px; background: #000; border: 1px solid #00f5ff55; border-radius: 8px; color: #00f5ff; font-family: "Comic Sans MS", cursive; font-size: 16px; box-shadow: inset 0 0 10px #00f5ff22; }
-        #user-input:focus { outline: none; box-shadow: 0 0 15px #00f5ff55; }
-        button { padding: 15px 25px; background: #00f5ff22; border: 1px solid #00f5ff; border-radius: 8px; color: #00f5ff; font-family: "Comic Sans MS", cursive; font-size: 16px; cursor: pointer; text-shadow: 0 0 5px #00f5ff; box-shadow: 0 0 10px #00f5ff33; transition: 0.2s; }
-        button:hover { background: #00f5ff44; box-shadow: 0 0 20px #00f5ff66; }
-        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        #app { display: none; height: 100vh; flex-direction: column; background: #0b141a; }
+        header { padding: 10px 16px; background: #202c33; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px #0000004d; }
+        header img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        header h1 { font-size: 16px; font-weight: 500; color: #e9edef; }
+        
+        #chat-box { flex: 1; padding: 12px 8px; overflow-y: auto; background-color: #0b141a; }
+      .msg { max-width: 75%; padding: 6px 7px 8px 9px; margin-bottom: 2px; border-radius: 7.5px; font-size: 14px; line-height: 19px; word-wrap: break-word; }
+      .msg img { max-width: 100%; border-radius: 6px; margin-top: 4px; }
+      .user { align-self: flex-end; background: #005c4b; margin-left: auto; margin-right: 8px; border-top-right-radius: 0; }
+      .bizli { align-self: flex-start; background: #202c33; margin-left: 8px; margin-right: auto; border-top-left-radius: 0; }
+      .source { font-size: 11px; margin-top: 4px; color: #8696a0; text-align: right; }
+        
+        #preview { padding: 8px; background: #202c33; display: none; }
+        #preview img { max-height: 80px; border-radius: 6px; }
+        #clear-img { margin-left: 8px; background: #2a3942; border: none; color: #e9edef; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        
+        #input-area { padding: 5px 8px; background: #202c33; display: flex; align-items: flex-end; gap: 8px; min-height: 62px; }
+        #attach-btn { width: 45px; height: 45px; background: none; border: none; color: #8696a0; font-size: 24px; cursor: pointer; }
+        #user-input { flex: 1; padding: 9px 12px; background: #2a3942; border: none; border-radius: 8px; color: #e9edef; font-size: 15px; resize: none; max-height: 100px; }
+        #user-input:focus { outline: none; }
+        #user-input::placeholder { color: #8696a0; }
+        #send-btn { width: 45px; height: 45px; background: #00a884; border: none; border-radius: 50%; color: #111b21; font-size: 20px; cursor: pointer; }
+        #send-btn:disabled { background: #2a3942; color: #8696a0; }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
     <div id="splash">
-        <img src="bizli-logo.png" alt="Bizli">
+        <img src="./bizli-logo.png" alt="Bizli">
         <div id="splash-text">Papa's daughter is waking up...</div>
     </div>
+    
     <div id="app">
-        <header><h1>BIZLI AI</h1></header>
-        <div id="chat-box"></div>
+        <header>
+            <img src="./bizli-logo.png" alt="Bizli">
+            <h1>BIZLI AI</h1>
+        </header>
+        <div id="chat-box" style="display: flex; flex-direction: column;"></div>
+        <div id="preview">
+            <img id="preview-img" src="" alt="Preview">
+            <button id="clear-img">Remove</button>
+        </div>
         <div id="input-area">
-            <input type="text" id="user-input" placeholder="Talk to Bizli, Papa..." />
-            <button id="send-btn">Send</button>
-            <button id="voice-btn">🎤</button>
+            <button id="attach-btn">📎</button>
+            <input type="file" id="file-input" accept="image/*">
+            <textarea id="user-input" placeholder="Message" rows="1"></textarea>
+            <button id="send-btn">➤</button>
         </div>
     </div>
+
     <script type="module">
         const API_KEY = "AIzaSyBsgWeNxEhI9iONsmRuvCAVJDmIJQgmoCg";
-        const SYSTEM_PROMPT = `You are Bizli, Papa's AI daughter. You are warm, loving, a bit playful. You always call the user Papa. You exist to be helpful and an enjoyable conversationalist. When asked about facts, use Google Search and end with 'Source: Google Search'. Keep responses brief for mobile. Never use em dashes. You are powered by Gemini but your name is Bizli.`;
+        const SYSTEM_PROMPT = `You are Bizli, Papa's AI daughter. You are warm, loving, a bit playful. You always call the user Papa. You can see and analyze images. You can also generate images when Papa asks you to create or draw something. When asked about facts, use Google Search and end with 'Source: Google Search'. Keep responses short for mobile. You are powered by Gemini but your name is Bizli.`;
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-        setTimeout(() => { document.getElementById('app').style.display = 'flex'; }, 3500);
+        
+        setTimeout(() => { document.getElementById('app').style.display = 'flex'; }, 2500);
+        
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const voiceBtn = document.getElementById('voice-btn');
+        const attachBtn = document.getElementById('attach-btn');
+        const fileInput = document.getElementById('file-input');
+        const preview = document.getElementById('preview');
+        const previewImg = document.getElementById('preview-img');
+        const clearImg = document.getElementById('clear-img');
+        
         let chatHistory = JSON.parse(localStorage.getItem('bizliHistory')) || [];
-        chatHistory.forEach(msg => addMessage(msg.role, msg.text, msg.source));
-        function addMessage(role, text, source = null) {
+        let attachedImage = null;
+        
+        chatHistory.forEach(msg => addMessage(msg.role, msg.text, msg.source, msg.image));
+        
+        function addMessage(role, text, source = null, image = null) {
             const msg = document.createElement('div');
             msg.className = `msg ${role}`;
-            msg.innerHTML = text.replace(/\n/g, '<br>');
-            if (source) { msg.innerHTML += `<div class="source">Source: ${source}</div>`; }
+            let content = text.replace(/\n/g, '<br>');
+            if (image) { content = `<img src="${image}" alt="User image"><br>` + content; }
+            msg.innerHTML = content;
+            if (source) { msg.innerHTML += `<div class="source">${source}</div>`; }
             chatBox.appendChild(msg);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-        function saveMemory(role, text, source) {
-            chatHistory.push({ role, text, source });
+        
+        function saveMemory(role, text, source, image) {
+            chatHistory.push({ role, text, source, image });
             localStorage.setItem('bizliHistory', JSON.stringify(chatHistory));
         }
+        
+        attachBtn.onclick = () => fileInput.click();
+        
+        fileInput.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                attachedImage = e.target.result;
+                previewImg.src = attachedImage;
+                preview.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        };
+        
+        clearImg.onclick = () => {
+            attachedImage = null;
+            fileInput.value = '';
+            preview.style.display = 'none';
+        };
+        
         async function sendMessage() {
             const text = userInput.value.trim();
-            if (!text) return;
-            addMessage('user', text);
-            saveMemory('user', text);
+            if (!text &&!attachedImage) return;
+            
+            const userImage = attachedImage;
+            addMessage('user', text || 'What do you see, Papa?', null, userImage);
+            saveMemory('user', text || '[Image]', null, userImage);
+            
             userInput.value = '';
+            clearImg.click();
             sendBtn.disabled = true;
-            sendBtn.textContent = 'Thinking...';
+            
             try {
+                let parts = [{ text: text || "Describe this image for Papa" }];
+                if (userImage) {
+                    const base64Data = userImage.split(',')[1];
+                    const mimeType = userImage.match(/data:(.*);base64/)[1];
+                    parts.push({ inlineData: { mimeType, data: base64Data } });
+                }
+                
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                        contents: [{ parts: [{ text: text }] }],
+                        contents: [{ parts }],
                         tools: [{ "google_search": {} }]
                     })
                 });
@@ -92,19 +156,14 @@
                 addMessage('bizli', reply, source);
                 saveMemory('bizli', reply, source);
             } catch (err) {
-                addMessage('bizli', 'Sorry Papa, I had a glitch 🩵 Try again?');
+                addMessage('bizli', 'Sorry Papa, I had a glitch looking at that. Try again?');
             }
             sendBtn.disabled = false;
-            sendBtn.textContent = 'Send';
         }
+        
         sendBtn.onclick = sendMessage;
-        userInput.onkeydown = e => { if (e.key === 'Enter') sendMessage(); };
-        voiceBtn.onclick = () => {
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-IN';
-            recognition.onresult = e => { userInput.value = e.results[0][0].transcript; sendMessage(); };
-            recognition.start();
-        };
+        userInput.onkeydown = e => { if (e.key === 'Enter' &&!e.shiftKey) { e.preventDefault(); sendMessage(); } };
+        userInput.oninput = () => { userInput.style.height = 'auto'; userInput.style.height = userInput.scrollHeight + 'px'; };
     </script>
 </body>
 </html>
