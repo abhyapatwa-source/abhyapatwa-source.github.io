@@ -2,272 +2,258 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0b141a">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./bizli-logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bizli AI</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="Bizli AI - Your personal AI assistant">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    
+    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-        body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #131314; color: #e3e3e3; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        #login-screen { position: fixed; inset: 0; background: #131314; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; gap: 24px; }
-        #login-screen img { width: 80px; height: 80px; object-fit: contain; }
-        #login-screen h1 { font-size: 32px; font-weight: 400; }
-        #login-screen p { color: #9aa0a6; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
         
-        #splash { position: fixed; inset: 0; background: #131314; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; animation: fadeOut 0.5s ease 2s forwards; }
-        #splash img { width: 60%; max-width: 180px; height: auto; object-fit: contain; }
-        #splash-text { margin-top: 20px; font-size: 16px; color: #9aa0a6; }
-        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+       .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
         
-        #app { display: none; height: 100dvh; flex-direction: column; width: 100vw; }
-        header { padding: 12px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; border-bottom: 1px solid #2d2e30; }
-        header img { height: 32px; width: 32px; border-radius: 50%; object-fit: contain; }
-        header h1 { font-size: 20px; font-weight: 500; color: #e3e3e3; }
-        #user-info { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-        #user-pic { width: 32px; height: 32px; border-radius: 50%; }
-        #clear-btn { background: none; border: none; color: #9aa0a6; font-size: 20px; cursor: pointer; }
+       .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        }
         
-        #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
-        #empty-state { margin: auto; text-align: center; max-width: 500px; }
-        #empty-state img { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.8; }
-        #empty-state h2 { font-size: 36px; font-weight: 400; background: linear-gradient(74deg, #4285f4 0%, #9b72cb 9%, #d96570 20%, #d96570 24%, #9b72cb 35%, #4285f4 44%, #9b72cb 50%, #d96570 56%, #131314 75%, #131314 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 32px; }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         
-        .msg-group { display: flex; gap: 12px; width: 100%; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
-        .msg-content { flex: 1; padding-top: 4px; }
-        .msg-name { font-weight: 500; margin-bottom: 4px; }
-        .msg-text { font-size: 16px; line-height: 28px; white-space: pre-wrap; word-wrap: break-word; }
-        .msg-text img { max-width: 100%; border-radius: 12px; margin-top: 8px; }
-        .source { font-size: 12px; margin-top: 12px; color: #9aa0a6; }
-        .source a { color: #8ab4f8; text-decoration: none; }
+       .subtitle {
+            color: #a0a0b8;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
         
-        #input-area { padding: 8px 16px 16px; flex-shrink: 0; }
-        #input-container { max-width: 768px; margin: 0 auto; background: #1e1f20; border: 1px solid #2d2e30; border-radius: 24px; padding: 4px 4px 16px; display: flex; align-items: flex-end; gap: 8px; }
-        #input-container:focus-within { background: #282a2c; border-color: #3c4043; }
-        #attach-btn { width: 40px; height: 40px; background: none; border: none; color: #9aa0a6; font-size: 20px; cursor: pointer; flex-shrink: 0; border-radius: 50%; }
-        #attach-btn:hover { background: #2d2e30; }
-        #user-input { flex: 1; padding: 10px 0; background: none; border: none; color: #e3e3e3; font-size: 16px; resize: none; max-height: 200px; line-height: 24px; }
-        #user-input:focus { outline: none; }
-        #user-input::placeholder { color: #9aa0a6; }
-        #send-btn { width: 40px; height: 40px; background: linear-gradient(135deg, #8ab4f8, #c58af9); border: none; border-radius: 50%; color: #131314; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        #send-btn:disabled { background: #2d2e30; color: #5f6368; }
-        #preview { max-width: 768px; margin: 0 auto 8px; padding: 8px; background: #1e1f20; border-radius: 12px; display: none; align-items: center; gap: 8px; }
-        #preview img { max-height: 60px; border-radius: 8px; }
-        #clear-img { background: #2d2e30; border: none; color: #e3e3e3; padding: 4px 8px; border-radius: 6px; font-size: 12px; }
-        #disclaimer { text-align: center; font-size: 12px; color: #9aa0a6; padding: 12px 16px 0; max-width: 768px; margin: 0 auto; }
-        input[type="file"] { display: none; }
+        #login-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #app-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+       .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+       .user-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+        
+       .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+       .sign-out-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+       .sign-out-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+       .chat-placeholder {
+            color: #a0a0b8;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+        
+       .offline-banner {
+            display: none;
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
-    <div id="login-screen">
-        <img src="./bizli-logo.png" alt="Bizli">
-        <h1>Bizli AI</h1>
-        <p>Sign in to chat with your AI daughter</p>
-        <div id="g_id_onload"
-             data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin" data-type="standard" data-theme="filled_black" data-size="large" data-text="continue_with" data-shape="pill"></div>
-    </div>
-
-    <div id="splash">
-        <img src="./bizli-logo.png" alt="Bizli">
-        <div id="splash-text">Waking up for Papa...</div>
+    <div class="offline-banner" id="offlineBanner">
+        You're offline. Some features may not work.
     </div>
     
-    <div id="app">
-        <header>
-            <img src="./bizli-logo.png" alt="Bizli">
-            <h1>Bizli</h1>
-            <div id="user-info">
-                <img id="user-pic" src="" alt="You">
-                <button id="clear-btn">⋮</button>
+    <div class="container">
+        <div class="logo">🤖</div>
+        <h1>Bizli AI</h1>
+        <p class="subtitle">Your personal AI assistant</p>
+        
+        <!-- Login Section -->
+        <div id="login-section">
+            <div id="g_id_onload"
+                 data-client_id="118990478274-6465gb1080n5uj2j0vc93rq16n1k3g1j.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
             </div>
-        </header>
-        <div id="chat-box">
-            <div id="empty-state">
-                <img src="./bizli-logo.png" alt="Bizli">
-                <h2 id="greeting">Hello, Papa</h2>
+            
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="pill"
+                 data-theme="filled_black"
+                 data-text="continue_with"
+                 data-size="large"
+                 data-logo_alignment="left">
             </div>
         </div>
-        <div id="input-area">
-            <div id="preview">
-                <img id="preview-img" src="" alt="Preview">
-                <button id="clear-img">Remove</button>
+        
+        <!-- App Section -->
+        <div id="app-section">
+            <div class="user-info">
+                <img id="userPhoto" class="user-photo" src="" alt="User">
+                <div>
+                    <div class="user-name" id="userName"></div>
+                    <div style="color: #a0a0b8; font-size: 0.9rem;">Signed in</div>
+                </div>
             </div>
-            <div id="input-container">
-                <button id="attach-btn">+</button>
-                <input type="file" id="file-input" accept="image/*">
-                <textarea id="user-input" placeholder="Message Bizli" rows="1"></textarea>
-                <button id="send-btn" disabled>↑</button>
+            
+            <div class="chat-placeholder">
+                🚀 Bizli AI is ready, Papa!<br><br>
+                Chat functionality coming soon. Your login works perfectly.
             </div>
-            <div id="disclaimer">Bizli can make mistakes. Consider checking important info.</div>
+            
+            <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
         </div>
     </div>
-
+    
     <script>
-        const API_KEY = "AIzaSyBsgWeNxEhI9iONsmRuvCAVJDmIJQgmoCg";
-        const SYSTEM_PROMPT = `You are Bizli, the user's AI daughter. Be warm, loving, a bit playful. Always call the user by their name + ", Papa" if you know it, otherwise just "Papa". You can see and analyze images. When asked about facts, use Google Search and end with 'Source: Google Search'. Keep responses concise for mobile. You are powered by Gemini but your name is Bizli.`;
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        // Check if user is already logged in
+        window.onload = function() {
+            const savedUser = localStorage.getItem('bizliUser');
+            if (savedUser) {
+                showApp(JSON.parse(savedUser));
+            }
+            registerServiceWorker();
+            checkOnlineStatus();
+        };
         
-        let user = JSON.parse(localStorage.getItem('bizliUser'));
-        let chatHistory = JSON.parse(localStorage.getItem('bizliHistory')) || [];
-        let attachedImage = null;
-        
-        const loginScreen = document.getElementById('login-screen');
-        const splash = document.getElementById('splash');
-        const app = document.getElementById('app');
-        const chatBox = document.getElementById('chat-box');
-        const emptyState = document.getElementById('empty-state');
-        const greeting = document.getElementById('greeting');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const attachBtn = document.getElementById('attach-btn');
-        const fileInput = document.getElementById('file-input');
-        const preview = document.getElementById('preview');
-        const previewImg = document.getElementById('preview-img');
-        const clearImg = document.getElementById('clear-img');
-        const clearBtn = document.getElementById('clear-btn');
-        const userPic = document.getElementById('user-pic');
-        
+        // Google Sign-In callback
         function handleCredentialResponse(response) {
-            const data = parseJwt(response.credential);
-            user = { name: data.given_name, fullName: data.name, picture: data.picture };
-            localStorage.setItem('bizliUser', JSON.stringify(user));
-            startApp();
-        }
-        
-        function parseJwt(token) {
-            return JSON.parse(atob(token.split('.')[1]));
-        }
-        
-        function startApp() {
-            loginScreen.style.display = 'none';
-            splash.style.display = 'flex';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                app.style.display = 'flex';
-                userPic.src = user.picture;
-                greeting.textContent = `Hello, ${user.name}, Papa`;
-                loadHistory();
-            }, 2000);
-        }
-        
-        if (user) {
-            startApp();
-        } else {
-            loginScreen.style.display = 'flex';
-        }
-        
-        function loadHistory() {
-            if (chatHistory.length > 0) {
-                emptyState.style.display = 'none';
-                chatHistory.forEach(msg => addMessage(msg.role, msg.text, msg.source, msg.image));
-            }
-        }
-        
-        function addMessage(role, text, source = null, image = null) {
-            emptyState.style.display = 'none';
-            const group = document.createElement('div');
-            group.className = 'msg-group';
-            const avatar = document.createElement('img');
-            avatar.className = 'avatar';
-            avatar.src = role === 'user' ? user.picture : './bizli-logo.png';
-            const content = document.createElement('div');
-            content.className = 'msg-content';
-            content.innerHTML = `<div class="msg-name">${role === 'user' ? user.name : 'Bizli'}</div><div class="msg-text"></div>`;
-            const textDiv = content.querySelector('.msg-text');
-            let contentHtml = text;
-            if (image) contentHtml = `<img src="${image}" alt="User image"><br>` + contentHtml;
-            textDiv.innerHTML = contentHtml;
-            if (source) textDiv.innerHTML += `<div class="source">Source: <a href="#" onclick="return false">${source}</a></div>`;
-            group.appendChild(avatar);
-            group.appendChild(content);
-            chatBox.appendChild(group);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-        
-        function saveMemory(role, text, source, image) {
-            chatHistory.push({ role, text, source, image });
-            localStorage.setItem('bizliHistory', JSON.stringify(chatHistory));
-        }
-        
-        clearBtn.onclick = () => {
-            if (confirm('Clear chat + Sign out, Papa?')) {
-                localStorage.clear();
-                location.reload();
-            }
-        };
-        
-        attachBtn.onclick = () => fileInput.click();
-        fileInput.onchange = e => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                attachedImage = e.target.result;
-                previewImg.src = attachedImage;
-                preview.style.display = 'flex';
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            const user = {
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture
             };
-            reader.readAsDataURL(file);
-        };
-        clearImg.onclick = () => {
-            attachedImage = null;
-            fileInput.value = '';
-            preview.style.display = 'none';
-        };
-        
-        async function sendMessage() {
-            const text = userInput.value.trim();
-            if (!text && !attachedImage) return;
-            const userImage = attachedImage;
-            addMessage('user', text || 'What do you see?', null, userImage);
-            saveMemory('user', text || '[Image]', null, userImage);
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            sendBtn.disabled = true;
-            clearImg.click();
-            
-            try {
-                let parts = [{ text: `${text || "Describe this image"}. User's name is ${user.name}` }];
-                if (userImage) {
-                    const base64Data = userImage.split(',')[1];
-                    const mimeType = userImage.match(/data:(.*);base64/)[1];
-                    parts.push({ inlineData: { mimeType, data: base64Data } });
-                }
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                        contents: [{ parts }],
-                        tools: [{ "google_search": {} }]
-                    })
-                });
-                const data = await response.json();
-                const reply = data.candidates[0].content.parts[0].text;
-                let source = null;
-                if (data.candidates[0].groundingMetadata?.webSearchQueries) { source = "Google Search"; }
-                addMessage('bizli', reply, source);
-                saveMemory('bizli', reply, source);
-            } catch (err) {
-                addMessage('bizli', `Sorry ${user.name}, Papa, I had a glitch. Try again?`);
-            }
-            sendBtn.disabled = false;
+            localStorage.setItem('bizliUser', JSON.stringify(user));
+            showApp(user);
         }
         
-        sendBtn.onclick = sendMessage;
-        userInput.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
-        userInput.oninput = () => {
-            userInput.style.height = 'auto';
-            userInput.style.height = userInput.scrollHeight + 'px';
-            sendBtn.disabled = !userInput.value.trim() && !attachedImage;
-        };
+        // Show app after login
+        function showApp(user) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('app-section').style.display = 'block';
+            document.getElementById('userName').textContent = `Hello, ${user.name}, Papa`;
+            document.getElementById('userPhoto').src = user.picture;
+        }
+        
+        // Sign out
+        function signOut() {
+            localStorage.removeItem('bizliUser');
+            google.accounts.id.disableAutoSelect();
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('app-section').style.display = 'none';
+        }
+        
+        // Service Worker for PWA + Offline
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                   .then(reg => console.log('Service Worker registered'))
+                   .catch(err => console.log('Service Worker failed', err));
+            }
+        }
+        
+        // Online/Offline detection
+        function checkOnlineStatus() {
+            const banner = document.getElementById('offlineBanner');
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    banner.style.display = 'none';
+                } else {
+                    banner.style.display = 'block';
+                }
+            }
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+        }
     </script>
 </body>
 </html>
