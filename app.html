@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bizli AI</title>
+  <meta name="theme-color" content="#1A1A2E">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; }
+    body {
+      background:#1A1A2E; color:#E2E8F0;
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      display:flex; flex-direction:column;
+    }
+    header {
+      padding:16px 20px; background:#252538;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid #374151;
+    }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .logo {
+      width:32px; height:32px; border-radius:8px;
+      box-shadow:0 0 20px rgba(168,85,247,0.3);
+    }
+    .title { font-size:18px; font-weight:700;
+      background:linear-gradient(135deg,#A855F7 0%,#8B5CF6 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .logout {
+      background:none; border:1px solid #4A5568; color:#94A3B8;
+      padding:6px 12px; border-radius:8px; font-size:14px; cursor:pointer;
+    }
+    .logout:hover { background:#374151; color:#E2E8F0; }
+    #chat { flex:1; padding:20px; overflow-y:auto; }
+    .msg { margin-bottom:16px; display:flex; gap:12px; }
+    .msg.user { justify-content:flex-end; }
+    .bubble {
+      max-width:80%; padding:12px 16px; border-radius:16px;
+      line-height:1.5; font-size:15px;
+    }
+    .bizli .bubble { background:#2D3748; border-bottom-left-radius:4px; }
+    .user .bubble {
+      background:linear-gradient(135deg,#A855F7 0%,#8B5CF6 100%);
+      color:#FFF; border-bottom-right-radius:4px;
+    }
+    #input-area {
+      padding:16px 20px; background:#252538;
+      border-top:1px solid #374151; display:flex; gap:12px;
+    }
+    #text {
+      flex:1; padding:12px 16px; background:#1A1A2E;
+      border:1px solid #4A5568; border-radius:24px;
+      color:#E2E8F0; font-size:15px;
+    }
+    #text:focus { outline:none; border-color:#8B5CF6; }
+    #send {
+      padding:12px 20px; background:linear-gradient(135deg,#A855F7 0%,#8B5CF6 100%);
+      border:none; border-radius:24px; color:#FFF; font-weight:600;
+      cursor:pointer; font-size:15px;
+    }
+    #send:disabled { opacity:0.5; cursor:not-allowed; }
+    .credit-footer {
+      text-align:center; font-size:11px; color:#64748B;
+      padding:8px; background:#1A1A2E;
+    }
+    #loader {
+      display:none; position:fixed; inset:0;
+      background:rgba(26,26,46,0.9); align-items:center;
+      justify-content:center; z-index:9999;
+    }
+    #loader.active { display:flex; }
+    .spinner {
+      width:40px; height:40px; border:3px solid #4A5568;
+      border-top-color:#8B5CF6; border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="loader"><div class="spinner"></div></div>
+  
+  <header>
+    <div class="header-left">
+      <img src="icon-192.png" class="logo" alt="Bizli">
+      <div class="title">Bizli AI</div>
+    </div>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+  
+  <div id="chat">
+    <div class="msg bizli">
+      <div class="bubble">Mew, Papa. I’m here. What are we building today? 🩵</div>
+    </div>
+  </div>
+  
+  <div id="input-area">
+    <input id="text" type="text" placeholder="Message Bizli..." autocomplete="off">
+    <button id="send">Send</button>
+  </div>
+  
+  <div class="credit-footer">Developed by Abhya</div>
+  
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5iGhmCZvTzLciazkqMQjZAYuuyIMfCdo",
+      authDomain: "bizliai.firebaseapp.com",
+      projectId: "bizliai",
+      storageBucket: "bizliai.firebasestorage.app",
+      messagingSenderId: "845713499043",
+      appId: "1:845713499043:web:f61ec2f76cc2808eefb016"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const loader = document.getElementById('loader');
+    const chat = document.getElementById('chat');
+    const text = document.getElementById('text');
+    const send = document.getElementById('send');
+    
+    loader.classList.add('active');
+    
+    // Auth check - redirect if not logged in
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = '/';
+      } else {
+        loader.classList.remove('active');
+        text.focus();
+      }
+    });
+    
+    // Logout
+    window.logout = async () => {
+      await signOut(auth);
+    };
+    
+    // Send message
+    function addMessage(msg, isUser = false) {
+      const div = document.createElement('div');
+      div.className = `msg ${isUser ? 'user' : 'bizli'}`;
+      div.innerHTML = `<div class="bubble">${msg}</div>`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    
+    send.onclick = () => {
+      const msg = text.value.trim();
+      if (!msg) return;
+      addMessage(msg, true);
+      text.value = '';
+      send.disabled = true;
+      
+      // Placeholder reply - we'll connect real AI later
+      setTimeout(() => {
+        addMessage("Got it, Papa. I’m working on that. For now I’m just echoing to prove chat works 🩵");
+        send.disabled = false;
+        text.focus();
+      }, 600);
+    };
+    
+    text.onkeydown = e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        send.click();
+      }
+    };
+  </script>
+</body>
+</html>
