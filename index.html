@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bizli AI</title>
     <meta name="theme-color" content="#1A1A2E">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <style>
         * {
             margin: 0;
@@ -39,12 +39,14 @@
             margin: 0 auto 24px;
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            background: #000;
         }
         
         .logo img {
             width: 100%;
             height: 100%;
             border-radius: 20px;
+            object-fit: cover;
         }
         
         h1 {
@@ -63,7 +65,7 @@
             margin-bottom: 40px;
         }
         
-        .google-btn {
+        .login-btn {
             width: 100%;
             padding: 14px 24px;
             background: #2D3748;
@@ -78,16 +80,36 @@
             gap: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            margin-bottom: 12px;
         }
         
-        .google-btn:hover {
+        .login-btn:hover {
             background: #374151;
             border-color: #6B7280;
         }
         
-        .google-btn img {
+        .login-btn img, .login-btn svg {
             width: 20px;
             height: 20px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #64748B;
+            font-size: 14px;
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #334155;
+        }
+        
+        .divider span {
+            padding: 0 12px;
         }
         
         .credit-footer {
@@ -105,14 +127,30 @@
 <body>
     <div class="login-container">
         <div class="logo">
-            <img src="/icon-192.png" alt="Bizli AI">
+            <img src="icon-192.png" alt="Bizli AI">
         </div>
         <h1>Bizli AI</h1>
         <p class="subtitle">Your personal AI assistant</p>
         
-        <button class="google-btn" onclick="signInWithGoogle()">
+        <button class="login-btn" onclick="signInWithGoogle()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             Continue with Google
+        </button>
+        
+        <button class="login-btn" onclick="signInWithEmail()">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            Continue with Email
+        </button>
+        
+        <div class="divider"><span>or</span></div>
+        
+        <button class="login-btn" onclick="signInWithApple()">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            Continue with Apple
         </button>
     </div>
     
@@ -120,8 +158,16 @@
     
     <script>
         function signInWithGoogle() {
-            // Your Firebase auth code here
             console.log('Google sign in');
+            // Your Firebase auth code here
+        }
+        function signInWithEmail() {
+            console.log('Email sign in');
+            // Redirect to email/password form
+        }
+        function signInWithApple() {
+            console.log('Apple sign in');
+            // Your Apple auth code here
         }
     </script>
 </body>
