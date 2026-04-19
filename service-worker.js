@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'bizli-v4';
+const CACHE_VERSION = 'bizli-v5'; // was v4
 const urlsToCache = [
   './',
   './index.html',
