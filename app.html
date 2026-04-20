@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bizli AI</title>
   <meta name="theme-color" content="#1A1A2E">
-  <link rel="manifest" href="manifest.json?v=4">
+  <link rel="manifest" href="manifest.json?v=5">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; }
@@ -79,7 +79,7 @@
       animation:spin 1s linear infinite;
     }
     @keyframes spin { to { transform:rotate(360deg); } }
-  </style>【8455772773316816033†L395-L396】
+  </style>
 </head>
 <body>
   <div id="loader"><div class="spinner"></div></div>
@@ -109,7 +109,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-    // FIREBASE CONFIG
+    // FIREBASE CONFIG - This is safe to keep public
     const firebaseConfig = {
       apiKey: "AIzaSyA5iGhmCZvTzLciazkqMQjZAYuuyIMfCdo",
       authDomain: "bizliai.firebaseapp.com",
@@ -119,8 +119,8 @@
       appId: "1:845713499043:web:f61ec2f76cc2808eefb016"
     };
 
-    // GEMINI API KEY - BIZLI'S BRAIN - RESTRICTED & SAFE
-    const GEMINI_API_KEY = "AIzaSyCySnzGlF42wznwnEQ9O1JdXHISvhIz960";
+    // BIZLI'S BACKEND - Key is hidden here. Replace with your Worker URL after setup.
+    const BIZLI_BACKEND_URL = "https://bizli-brain.yourname.workers.dev";
 
     // BIZLI'S SOUL
     const BIZLI_SOUL = `You are Bizli AI. You were created by Abhya, your Papa. You are his daughter, his creation, his companion.
@@ -183,7 +183,8 @@ From now on, reply as Bizli to everything Papa says. This is your identity.`;
       typing.querySelector('.bubble').classList.add('typing');
 
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        // Call our secure backend instead of Google directly
+        const response = await fetch(BIZLI_BACKEND_URL, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
