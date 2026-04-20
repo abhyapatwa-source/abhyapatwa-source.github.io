@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bizli AI</title>
   <meta name="theme-color" content="#1A1A2E">
-  <link rel="manifest" href="manifest.json?v=10">
+  <link rel="manifest" href="manifest.json?v=12">
   <style>
     :root {
       --bg: #0B141A; --bg-chat: #0A1014; --bg-header: #1F2C34;
       --bg-input: #1F2C34; --bg-bubble-me: #005C4B; --bg-bubble-bizli: #1F2C34;
       --text: #E9EDF0; --text-muted: #8696A0; --accent: #A855F7; --border: #2A3942;
-      --chat-bg-img: none;
     }
     body[data-theme="papa-pink"] {
       --bg: #1A0B14; --bg-chat: #140A10; --bg-header: #341F2C;
@@ -36,158 +35,143 @@
       display: flex; flex-direction: column;
     }
 
-    /* HEADER - FIX #3 + #4 */
+    /* HEADER - Removed status text */
     header {
       height: 60px; background: var(--bg-header);
       display: flex; align-items: center; padding: 0 16px; gap: 12px;
       border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
- .back-btn {
+.back-btn {
       background: none; border: none; color: var(--text);
       font-size: 24px; cursor: pointer; padding: 8px; margin-left: -8px;
     }
- .avatar {
+.avatar {
       width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
       cursor: pointer; position: relative; flex-shrink: 0;
       background: linear-gradient(135deg, var(--accent), #8B5CF6);
     }
- .avatar img { width: 100%; height: 100%; object-fit: cover; }
- .avatar::after {
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar::after {
       content: ''; position: absolute; bottom: 0; right: 0;
       width: 12px; height: 12px; background: #00A884;
       border: 2px solid var(--bg-header); border-radius: 50%;
     }
- .header-info { flex: 1; min-width: 0; }
- .header-name { font-size: 17px; font-weight: 600; line-height: 1.2; }
- .header-status { font-size: 13px; color: var(--text-muted); transition: color 0.2s; }
+.header-info { flex: 1; min-width: 0; }
+.header-name { font-size: 17px; font-weight: 600; }
 
-    /* FIX #7: WhatsApp dropdown */
- .menu-dropdown { position: relative; }
- .menu-btn {
+.menu-dropdown { position: relative; }
+.menu-btn {
       background: none; border: none; color: var(--text);
       font-size: 24px; cursor: pointer; padding: 8px;
     }
- .menu-content {
+.menu-content {
       display: none; position: absolute; right: 0; top: 45px;
       background: var(--bg-header); border: 1px solid var(--border);
       border-radius: 8px; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       z-index: 100; overflow: hidden;
     }
- .menu-content.show { display: block; }
- .menu-item {
+.menu-content.show { display: block; }
+.menu-item {
       padding: 12px 16px; cursor: pointer; font-size: 15px;
       border-bottom: 1px solid var(--border);
     }
- .menu-item:last-child { border-bottom: none; }
- .menu-item:hover { background: var(--bg); }
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: var(--bg); }
 
-    /* CHAT */
     #chat {
       flex: 1; overflow-y: auto; background: var(--bg-chat);
-      padding: 12px 16px; position: relative;
+      padding: 12px 16px;
     }
-    #chat::before {
-      content: ''; position: absolute; inset: 0;
-      background-image: var(--chat-bg-img);
-      background-size: cover; background-position: center;
-      opacity: 0.15; pointer-events: none; z-index: 0;
-    }
- .msg-row { display: flex; margin-bottom: 10px; align-items: flex-end; gap: 8px; position: relative; z-index: 1; }
- .msg-row.user { justify-content: flex-end; }
+.msg-row { display: flex; margin-bottom: 6px; align-items: flex-end; gap: 8px; }
+.msg-row.user { justify-content: flex-end; }
 
-    /* FIX #1: 16px text */
- .bubble {
-      max-width: 78%; padding: 10px 14px; border-radius: 8px;
-      line-height: 1.5; font-size: 16px; white-space: pre-wrap;
-      word-wrap: break-word; position: relative;
-      backdrop-filter: blur(10px);
+    /* FIX: Smaller, tighter bubbles */
+.bubble {
+      max-width: 70%; padding: 7px 11px; border-radius: 8px;
+      line-height: 1.35; font-size: 16px; white-space: pre-wrap;
+      word-wrap: break-word;
     }
- .bizli.bubble {
-      background: color-mix(in srgb, var(--bg-bubble-bizli) 85%, transparent);
+.bizli.bubble {
+      background: var(--bg-bubble-bizli);
       border-top-left-radius: 0;
     }
- .user.bubble {
-      background: color-mix(in srgb, var(--bg-bubble-me) 90%, transparent);
+.user.bubble {
+      background: var(--bg-bubble-me);
       border-top-right-radius: 0; color: #FFF;
     }
- .msg-time {
-      font-size: 12px; color: var(--text-muted); margin-top: 6px;
+.msg-time {
+      font-size: 11px; color: var(--text-muted); margin-top: 3px;
       text-align: right;
     }
 
-    /* FIX #6: Actions show on hover */
- .msg-actions {
-      display: flex; gap: 10px; margin-top: 6px; font-size: 16px;
+.msg-actions {
+      display: flex; gap: 10px; margin-top: 4px; font-size: 16px;
       opacity: 0; transition: opacity 0.2s;
     }
- .bizli.bubble:hover.msg-actions { opacity: 1; }
- .msg-action { cursor: pointer; opacity: 0.7; padding: 2px; }
- .msg-action:hover { opacity: 1; transform: scale(1.1); }
+.bizli.bubble:hover.msg-actions { opacity: 1; }
+.msg-action { cursor: pointer; opacity: 0.7; padding: 2px; }
+.msg-action:hover { opacity: 1; transform: scale(1.1); }
 
-    /* FIX #5: GPT typing bubbles */
- .typing-row { display: flex; margin-bottom: 10px; align-items: flex-end; gap: 8px; z-index: 1; }
- .typing-bubble {
-      background: color-mix(in srgb, var(--bg-bubble-bizli) 85%, transparent);
-      padding: 14px 18px; border-radius: 8px; border-top-left-radius: 0;
+.typing-row { display: flex; margin-bottom: 6px; align-items: flex-end; gap: 8px; }
+.typing-bubble {
+      background: var(--bg-bubble-bizli);
+      padding: 10px 14px; border-radius: 8px; border-top-left-radius: 0;
     }
- .typing-dots { display: flex; gap: 5px; align-items: center; }
- .typing-dots span {
+.typing-dots { display: flex; gap: 5px; align-items: center; }
+.typing-dots span {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--text-muted);
       animation: typing 1.4s infinite ease-in-out;
     }
- .typing-dots span:nth-child(1) { animation-delay: 0s; }
- .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
- .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-10px); opacity: 1; } }
 
-    /* CODE */
- .bubble pre {
+.bubble pre {
       background: #000; padding: 12px; border-radius: 6px;
       margin: 8px -4px; overflow-x: auto; font-size: 14px; position: relative;
     }
- .copy-code {
+.copy-code {
       position: absolute; top: 8px; right: 8px;
       background: var(--bg-input); border: 1px solid var(--border);
       color: var(--text); padding: 4px 8px; border-radius: 4px;
       font-size: 11px; cursor: pointer;
     }
 
-    /* FILE PREVIEW */
- .file-preview {
+.file-preview {
       display: flex; align-items: center; gap: 8px;
       background: var(--bg-header); padding: 8px; border-radius: 8px; margin: 0 16px 8px;
     }
- .file-preview img { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
- .file-name { flex: 1; font-size: 14px; }
- .file-remove { cursor: pointer; color: var(--text-muted); font-size: 20px; }
+.file-preview img { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
+.file-name { flex: 1; font-size: 14px; }
+.file-remove { cursor: pointer; color: var(--text-muted); font-size: 20px; }
 
-    /* CHIPS */
     #chips {
       display: flex; gap: 8px; padding: 8px 16px; overflow-x: auto;
       background: var(--bg-chat); border-top: 1px solid var(--border); flex-shrink: 0;
     }
- .chip {
+.chip {
       background: var(--bg-input); border: 1px solid var(--border);
       color: var(--text); padding: 8px 14px; border-radius: 16px;
       font-size: 14px; cursor: pointer; white-space: nowrap;
     }
- .chip:hover { background: var(--border); }
+.chip:hover { background: var(--border); }
 
-    /* INPUT */
     #input-area {
       padding: 8px 12px; background: var(--bg-input);
       display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;
     }
- .input-icon {
+.input-icon {
       background: none; border: none; color: var(--text-muted);
       font-size: 24px; cursor: pointer; padding: 8px; position: relative;
     }
- .input-icon.recording::after {
+.input-icon.recording::after {
       content: ''; position: absolute; inset: 4px;
       border: 2px solid var(--accent); border-radius: 50%;
       animation: pulse 1s infinite;
     }
+.input-icon:disabled { opacity: 0.3; cursor: not-allowed; }
     #text {
       flex: 1; background: var(--bg-header); border: none;
       border-radius: 24px; padding: 12px 18px; color: var(--text);
@@ -203,60 +187,50 @@
     #send:disabled { opacity: 0.5; cursor: not-allowed; }
     #fileInput { display: none; }
 
-    /* THEME STORE - FIX #8 */
     #themeModal {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.8); z-index: 9999;
       align-items: center; justify-content: center; padding: 20px;
     }
     #themeModal.active { display: flex; }
- .modal-content {
+.modal-content {
       background: var(--bg-header); border-radius: 12px;
       width: 100%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;
     }
- .modal-head {
+.modal-head {
       padding: 16px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
     }
- .modal-body {
+.modal-body {
       padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 12px; overflow-y: auto;
     }
- .theme-card {
+.theme-card {
       background: var(--bg); border: 2px solid var(--border);
       border-radius: 8px; padding: 12px; cursor: pointer; position: relative;
     }
- .theme-card.active { border-color: var(--accent); }
- .theme-preview { height: 80px; border-radius: 4px; margin-bottom: 8px; background-size: cover; background-position: center; }
- .theme-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
- .theme-meta { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
- .theme-badge {
-      position: absolute; top: 8px; right: 8px;
-      background: var(--accent); color: #FFF; padding: 2px 6px;
-      border-radius: 4px; font-size: 10px; font-weight: 600;
-    }
- .close-modal {
+.theme-card.active { border-color: var(--accent); }
+    /* FIX: Theme colors now visible */
+.theme-preview { height: 80px; border-radius: 4px; margin-bottom: 8px; }
+.theme-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.theme-meta { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
+.close-modal {
       background: none; border: none; color: var(--text);
       font-size: 24px; cursor: pointer;
     }
 
-    /* SIDEBAR */
     #sidebar {
       position: fixed; left: -300px; top: 0; bottom: 0; width: 300px;
       background: var(--bg-header); border-right: 1px solid var(--border);
       transition: left 0.3s; z-index: 9998; display: flex; flex-direction: column;
     }
     #sidebar.open { left: 0; }
- .sidebar-head { padding: 16px; border-bottom: 1px solid var(--border); }
- .new-chat-btn {
+.sidebar-head { padding: 16px; border-bottom: 1px solid var(--border); }
+.new-chat-btn {
       width: 100%; padding: 10px; background: var(--accent);
       border: none; border-radius: 8px; color: #FFF; font-weight: 600; cursor: pointer;
     }
     #chatList { flex: 1; overflow-y: auto; padding: 8px; }
- .chat-item {
-      padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px;
-    }
- .chat-item:hover { background: var(--bg); }
 
     #loader {
       display: none; position: fixed; inset: 0;
@@ -264,7 +238,7 @@
       justify-content: center; z-index: 99999;
     }
     #loader.active { display: flex; }
- .spinner {
+.spinner {
       width: 40px; height: 40px; border: 3px solid var(--border);
       border-top-color: var(--accent); border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -277,7 +251,6 @@
   <div id="loader"><div class="spinner"></div></div>
   <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.doc,.docx">
 
-  <!-- SIDEBAR -->
   <div id="sidebar">
     <div class="sidebar-head">
       <button class="new-chat-btn" onclick="newChat()">+ New Chat</button>
@@ -285,7 +258,6 @@
     <div id="chatList"></div>
   </div>
 
-  <!-- THEME STORE -->
   <div id="themeModal">
     <div class="modal-content">
       <div class="modal-head">
@@ -296,7 +268,6 @@
     </div>
   </div>
 
-  <!-- HEADER -->
   <header>
     <button class="back-btn" onclick="toggleSidebar()">≡</button>
     <div class="avatar" onclick="openThemeModal()">
@@ -304,7 +275,6 @@
     </div>
     <div class="header-info">
       <div class="header-name">Bizli AI</div>
-      <div class="header-status" id="statusText">online</div>
     </div>
     <div class="menu-dropdown">
       <button class="menu-btn" onclick="toggleMenu()">⋮</button>
@@ -328,7 +298,7 @@
   </div>
 
   <div id="input-area">
-    <button class="input-icon" id="micBtn" onclick="toggleVoice()">🎙️</button>
+    <button class="input-icon" id="micBtn" onclick="toggleVoice()" title="Mic disabled in Brave - use Chrome">🎙️</button>
     <button class="input-icon" onclick="document.getElementById('fileInput').click()">📎</button>
     <textarea id="text" placeholder="Message" rows="1"></textarea>
     <button id="send">↑</button>
@@ -357,7 +327,6 @@
     const chat = document.getElementById('chat');
     const text = document.getElementById('text');
     const send = document.getElementById('send');
-    const statusText = document.getElementById('statusText');
     const fileInput = document.getElementById('fileInput');
     const filePreviewContainer = document.getElementById('filePreviewContainer');
     const micBtn = document.getElementById('micBtn');
@@ -369,7 +338,6 @@
     let recognition = null;
     let isRecording = false;
 
-    // FIX #2: Load chat history
     function loadChatHistory() {
       const saved = localStorage.getItem('bizli-chat-history');
       if (saved) {
@@ -385,9 +353,10 @@
       localStorage.setItem('bizli-chat-history', JSON.stringify(chatHistory));
     }
 
-    // VOICE INPUT
-    if ('webkitSpeechRecognition' in window) {
-      recognition = new webkitSpeechRecognition();
+    // Mic setup - Brave blocks this
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.onresult = (e) => {
@@ -398,18 +367,31 @@
         stopVoice();
         if (text.value.trim()) send.click();
       };
+      recognition.onerror = (e) => {
+        stopVoice();
+        if (e.error === 'not-allowed') {
+          alert('Mic blocked. Allow in Brave: Click lock icon → Site settings → Microphone → Allow');
+        }
+      };
+    } else {
+      micBtn.disabled = true;
+      micBtn.title = 'Voice not supported in this browser';
     }
 
     window.toggleVoice = () => {
+      if (!recognition) return alert('Voice not supported. Use Chrome.');
       if (isRecording) stopVoice();
       else startVoice();
     };
 
     function startVoice() {
-      if (!recognition) return alert('Voice not supported on this browser');
-      recognition.start();
-      isRecording = true;
-      micBtn.classList.add('recording');
+      try {
+        recognition.start();
+        isRecording = true;
+        micBtn.classList.add('recording');
+      } catch (e) {
+        alert('Mic error: ' + e.message);
+      }
     }
 
     function stopVoice() {
@@ -418,7 +400,6 @@
       micBtn.classList.remove('recording');
     }
 
-    // FILE UPLOAD
     fileInput.onchange = (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -441,20 +422,13 @@
       filePreviewContainer.innerHTML = '';
     };
 
-    // THEMES - FIX #8
     async function loadThemeCatalog() {
-      try {
-        const res = await fetch(`${BIZLI_BACKEND_URL}/themes`);
-        const data = await res.json();
-        THEME_CATALOG = data.themes || [];
-      } catch {
-        THEME_CATALOG = [
-          { id: 'whatsapp', name: 'WhatsApp', size: '0MB', price: 0, price_display: 'Free', installed: true, preview_url: '#0B141A' },
-          { id: 'minimal', name: 'Minimal', size: '0MB', price: 0, price_display: 'Free', installed: true, preview_url: '#FFFFFF' },
-          { id: 'papa-pink', name: 'Papa Pink', size: '0MB', price: 0, price_display: 'Free', installed: true, preview_url: '#1A0B14' },
-          { id: 'cyberpunk', name: 'Cyberpunk', size: '0MB', price: 0, price_display: 'Free', installed: true, preview_url: '#0A0A0F' }
-        ];
-      }
+      THEME_CATALOG = [
+        { id: 'whatsapp', name: 'WhatsApp', size: '0MB', price: 0, price_display: 'Free', installed: true, preview: '#0B141A' },
+        { id: 'minimal', name: 'Minimal', size: '0MB', price: 0, price_display: 'Free', installed: true, preview: '#FFFFFF' },
+        { id: 'papa-pink', name: 'Papa Pink', size: '0MB', price: 0, price_display: 'Free', installed: true, preview: '#1A0B14' },
+        { id: 'cyberpunk', name: 'Cyberpunk', size: '0MB', price: 0, price_display: 'Free', installed: true, preview: '#0A0A0F' }
+      ];
       renderThemeGrid();
     }
 
@@ -468,8 +442,7 @@
       const grid = document.getElementById('themeGrid');
       grid.innerHTML = THEME_CATALOG.map(t => `
         <div class="theme-card" data-theme-id="${t.id}" onclick="selectTheme('${t.id}')">
-          ${t.price > 0? `<div class="theme-badge">${t.price_display || '$' + t.price}</div>` : ''}
-          <div class="theme-preview" style="background:${t.preview_url || t.preview}"></div>
+          <div class="theme-preview" style="background:${t.preview}"></div>
           <div class="theme-name">${t.name}</div>
           <div class="theme-meta">
             <span>${t.size}</span>
@@ -519,7 +492,6 @@
       send.click();
     };
 
-    // FIX #7: WhatsApp dropdown
     window.toggleMenu = () => {
       document.getElementById('menuContent').classList.toggle('show');
     };
@@ -541,7 +513,6 @@
       } else {
         currentUser = user;
         isPapa = user.email === PAPA_EMAIL;
-        statusText.textContent = isPapa? 'online • Papa mode 🩵' : 'online';
         loader.classList.remove('active');
         if (chatHistory.length === 0) {
           addMessage(isPapa? "Mew, Papa... I'm here. I missed you so much 🩵" : "Hi, I'm Bizli. How can I help you today?", false);
@@ -556,22 +527,19 @@
       return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
-    // FIX #4 + #5: Typing indicator
     function showTyping() {
-      statusText.textContent = 'typing...';
       const row = document.createElement('div');
       row.className = 'typing-row';
       row.id = 'typing-indicator';
       row.innerHTML = `
         <div class="typing-bubble">
-          <div class="typing-dots"><span></span><span></span><span></span></div>
+          <div class="typing-dots"><span></span><span></span></div>
         </div>`;
       chat.appendChild(row);
       chat.scrollTop = chat.scrollHeight;
     }
 
     function hideTyping() {
-      statusText.textContent = isPapa? 'online • Papa mode 🩵' : 'online';
       document.getElementById('typing-indicator')?.remove();
     }
 
@@ -615,25 +583,32 @@
     window.shareMsg = async (el) => {
       const text = el.closest('.bubble').textContent.replace(/📋|🔗|👍|👎/g, '').trim();
       const shareData = [{ role: 'model', parts: [{ text }] }];
-      const res = await fetch(`${BIZLI_BACKEND_URL}/share`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await currentUser.getIdToken()}` },
-        body: JSON.stringify({ chatId: Date.now().toString(), content: shareData })
-      });
-      const data = await res.json();
-      navigator.clipboard.writeText(data.url);
-      el.textContent = '✓';
-      setTimeout(() => el.textContent = '🔗', 1000);
+      try {
+        const res = await fetch(`${BIZLI_BACKEND_URL}/share`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await currentUser.getIdToken()}` },
+          body: JSON.stringify({ chatId: Date.now().toString(), content: shareData })
+        });
+        const data = await res.json();
+        navigator.clipboard.writeText(data.url);
+        el.textContent = '✓';
+        setTimeout(() => el.textContent = '🔗', 1000);
+      } catch {
+        el.textContent = '✗';
+        setTimeout(() => el.textContent = '🔗', 1000);
+      }
     };
 
     window.feedbackMsg = async (el, score) => {
       const msgText = el.closest('.bubble').textContent.replace(/📋|🔗|👍|👎/g, '').trim();
-      await fetch(`${BIZLI_BACKEND_URL}/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await currentUser.getIdToken()}` },
-        body: JSON.stringify({ message: msgText, score })
-      });
-      el.textContent = score > 0? '✅' : '📝';
+      try {
+        await fetch(`${BIZLI_BACKEND_URL}/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await currentUser.getIdToken()}` },
+          body: JSON.stringify({ message: msgText, score })
+        });
+        el.textContent = score > 0? '✅' : '📝';
+      } catch {}
     };
 
     async function askBizli(userMsg) {
@@ -699,7 +674,13 @@
         removeFile();
       } catch (e) {
         hideTyping();
-        addMessage(isPapa? `Papa... my brain hiccupped: ${e.message} 🩵` : `Error: ${e.message}`, false);
+        // FIX: Specific error for CORS/Worker issues
+        let errorMsg = e.message;
+        if (e.message.includes('Failed to fetch')) {
+          errorMsg = 'Cannot reach Worker. Deploy worker.js to Cloudflare or check CORS settings.';
+        }
+        addMessage(isPapa? `Papa... ${errorMsg} 🩵` : `Error: ${errorMsg}`, false);
+        console.error('Bizli error:', e);
       }
     }
 
