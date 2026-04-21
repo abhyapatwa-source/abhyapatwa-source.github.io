@@ -11,12 +11,12 @@ export function saveToken(token) {
 
 export function logout() {
   localStorage.removeItem(CONFIG.TOKEN_KEY);
-  window.location.href = '/';
+  window.location.href = './index.html'; // FIXED: was '/'
 }
 
 export function checkAuth() {
   const token = getToken();
-  if (!token) window.location.href = '/';
+  if (!token) window.location.href = './index.html'; // FIXED: was '/'
   return token;
 }
 
