@@ -7,6 +7,8 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./icon-192.png">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     html, body { 
@@ -28,7 +30,7 @@
     }
     .logo img { 
       width: 80px; height: 80px; 
-      background: transparent; /* KILLS BLACK BOX */
+      background: transparent;
     }
     .splash h1 { font-size: 1.8rem; font-weight: 400; }
     .login-wrap {
@@ -40,7 +42,6 @@
     .login-box .logo { margin: 0 auto 20px; }
     .login-box h1 { font-size: 2rem; margin-bottom: 8px; color: #a78bfa; }
     .login-box p { opacity: 0.7; margin-bottom: 40px; }
-    #g_id_signin { margin: 10px auto; width: 280px; }
     .footer {
       position: absolute; bottom: 20px; width: 100%; 
       text-align: center; font-size: 12px; opacity: 0.5;
@@ -49,13 +50,13 @@
 </head>
 <body>
   <div class="splash" id="splash">
-    <div class="logo"><img src="./icon-192.png?v=2" alt="Bizli"></div>
+    <div class="logo"><img src="./icon-192.png?v=3" alt="Bizli"></div>
     <h1>Bizli AI</h1>
   </div>
 
   <div class="login-wrap" id="loginWrap">
     <div class="login-box">
-      <div class="logo"><img src="./icon-192.png?v=2" alt="Bizli"></div>
+      <div class="logo"><img src="./icon-192.png?v=3" alt="Bizli"></div>
       <h1>Bizli AI</h1>
       <p>Your personal AI assistant</p>
       <div id="g_id_onload"
@@ -69,9 +70,8 @@
   </div>
 
   <script type="module">
-    import { saveToken, getToken } from './assets/js/utils.js';
+    import { saveToken, getToken } from './assets/js/utils.js?v=3';
     
-    // If already logged in, skip to app immediately
     if (getToken()) {
       window.location.replace('./app.html');
     } else {
